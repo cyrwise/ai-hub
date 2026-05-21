@@ -5,25 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --bg: #0a0a0b;
     --surface: #111113;
-    --surface2: #17171a;
     --border: rgba(255,255,255,0.07);
-    --border-hover: rgba(255,255,255,0.16);
+    --border-hover: rgba(255,255,255,0.22);
     --text-primary: #f0efe8;
-    --text-secondary: #9a9892;
-    --text-muted: #5a5955;
+    --text-secondary: #b0ada6;
+    --text-muted: #6a6762;
     --text-dim: #333330;
     --mono: 'DM Mono', monospace;
     --display: 'Syne', sans-serif;
   }
-
-  html { scroll-behavior: smooth; }
 
   body {
     min-height: 100vh;
@@ -33,7 +30,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 52px 24px 40px;
+    padding: 52px 24px 44px;
   }
 
   .container {
@@ -43,61 +40,86 @@
   }
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
+    from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Header ── */
-  .header { margin-bottom: 40px; }
+  /* ── Clock block ── */
+  .clock-block { margin-bottom: 44px; }
 
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  .clock {
     font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    border: 0.5px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 10px;
-    margin-bottom: 16px;
-  }
-
-  .badge-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 6px rgba(74,222,128,0.6);
-    flex-shrink: 0;
-  }
-
-  .title {
-    font-family: var(--display);
-    font-size: 44px;
-    font-weight: 800;
+    font-weight: 300;
     line-height: 1;
+    display: flex;
+    align-items: baseline;
+  }
+
+  .clock-hm {
+    font-size: 76px;
+    font-weight: 300;
     letter-spacing: -0.03em;
     color: var(--text-primary);
-    margin-bottom: 10px;
   }
 
-  .title span { color: var(--text-dim); }
-
-  .subtitle {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    max-width: 400px;
+  .clock-sep {
+    font-size: 76px;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    color: var(--text-dim);
+    margin: 0 1px;
   }
+
+  .clock-sec {
+    font-size: 34px;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: -0.02em;
+    align-self: flex-end;
+    padding-bottom: 7px;
+    margin-left: 7px;
+  }
+
+  .clock-meta {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .clock-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .weather {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+  }
+
+  .weather-temp { color: var(--text-secondary); }
+  .weather-dot {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .weather-loc { color: var(--text-muted); }
 
   /* ── Section label ── */
   .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-muted);
     margin-bottom: 10px;
@@ -110,7 +132,7 @@
     content: '';
     flex: 1;
     height: 0.5px;
-    background: var(--border);
+    background: rgba(255,255,255,0.08);
   }
 
   /* ── Grids ── */
@@ -149,64 +171,42 @@
   .card:hover::before { opacity: 1; }
   .card:active { transform: translateY(0); }
 
-  /* Accents */
   .card--claude    { --a: #d97b45; }
-  .card--claude::before    { background: radial-gradient(ellipse at top left, rgba(217,123,69,.09), transparent 65%); }
-  .card--claude:hover      { border-color: rgba(217,123,69,.35); }
-
-  .card--gpt       { --a: #5aad7c; }
-  .card--gpt::before       { background: radial-gradient(ellipse at top left, rgba(90,173,124,.09), transparent 65%); }
-  .card--gpt:hover         { border-color: rgba(90,173,124,.35); }
-
+  .card--claude::before    { background: radial-gradient(ellipse at top left, rgba(217,123,69,.1), transparent 65%); }
+  .card--claude:hover      { border-color: rgba(217,123,69,.4); }
+  .card--gpt       { --a: #d4d2cb; }
+  .card--gpt::before       { background: radial-gradient(ellipse at top left, rgba(212,210,203,.07), transparent 65%); }
+  .card--gpt:hover         { border-color: rgba(212,210,203,.3); }
   .card--gemini    { --a: #6ba3f5; }
-  .card--gemini::before    { background: radial-gradient(ellipse at top left, rgba(107,163,245,.09), transparent 65%); }
-  .card--gemini:hover      { border-color: rgba(107,163,245,.35); }
-
+  .card--gemini::before    { background: radial-gradient(ellipse at top left, rgba(107,163,245,.1), transparent 65%); }
+  .card--gemini:hover      { border-color: rgba(107,163,245,.4); }
   .card--grok      { --a: #a78bfa; }
-  .card--grok::before      { background: radial-gradient(ellipse at top left, rgba(167,139,250,.09), transparent 65%); }
-  .card--grok:hover        { border-color: rgba(167,139,250,.35); }
-
+  .card--grok::before      { background: radial-gradient(ellipse at top left, rgba(167,139,250,.1), transparent 65%); }
+  .card--grok:hover        { border-color: rgba(167,139,250,.4); }
   .card--deepseek  { --a: #60b8f5; }
-  .card--deepseek::before  { background: radial-gradient(ellipse at top left, rgba(96,184,245,.08), transparent 65%); }
-  .card--deepseek:hover    { border-color: rgba(96,184,245,.3); }
-
+  .card--deepseek::before  { background: radial-gradient(ellipse at top left, rgba(96,184,245,.09), transparent 65%); }
+  .card--deepseek:hover    { border-color: rgba(96,184,245,.35); }
   .card--perplexity{ --a: #22d3a5; }
-  .card--perplexity::before{ background: radial-gradient(ellipse at top left, rgba(34,211,165,.08), transparent 65%); }
-  .card--perplexity:hover  { border-color: rgba(34,211,165,.3); }
-
+  .card--perplexity::before{ background: radial-gradient(ellipse at top left, rgba(34,211,165,.09), transparent 65%); }
+  .card--perplexity:hover  { border-color: rgba(34,211,165,.35); }
   .card--meta      { --a: #5b8fff; }
-  .card--meta::before      { background: radial-gradient(ellipse at top left, rgba(91,143,255,.08), transparent 65%); }
-  .card--meta:hover        { border-color: rgba(91,143,255,.3); }
-
+  .card--meta::before      { background: radial-gradient(ellipse at top left, rgba(91,143,255,.09), transparent 65%); }
+  .card--meta:hover        { border-color: rgba(91,143,255,.35); }
   .card--mistral   { --a: #f97316; }
-  .card--mistral::before   { background: radial-gradient(ellipse at top left, rgba(249,115,22,.08), transparent 65%); }
-  .card--mistral:hover     { border-color: rgba(249,115,22,.3); }
-
+  .card--mistral::before   { background: radial-gradient(ellipse at top left, rgba(249,115,22,.09), transparent 65%); }
+  .card--mistral:hover     { border-color: rgba(249,115,22,.35); }
   .card--copilot   { --a: #818cf8; }
-  .card--copilot::before   { background: radial-gradient(ellipse at top left, rgba(129,140,248,.08), transparent 65%); }
-  .card--copilot:hover     { border-color: rgba(129,140,248,.3); }
-
+  .card--copilot::before   { background: radial-gradient(ellipse at top left, rgba(129,140,248,.09), transparent 65%); }
+  .card--copilot:hover     { border-color: rgba(129,140,248,.35); }
   .card--kimi      { --a: #f472b6; }
-  .card--kimi::before      { background: radial-gradient(ellipse at top left, rgba(244,114,182,.08), transparent 65%); }
-  .card--kimi:hover        { border-color: rgba(244,114,182,.3); }
+  .card--kimi::before      { background: radial-gradient(ellipse at top left, rgba(244,114,182,.09), transparent 65%); }
+  .card--kimi:hover        { border-color: rgba(244,114,182,.35); }
 
   .card-top { display: flex; align-items: center; justify-content: space-between; }
-
-  .dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--a);
-    flex-shrink: 0;
-  }
-
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--a); }
   .card--ext .dot { width: 6px; height: 6px; }
 
-  .arrow {
-    font-size: 13px;
-    color: var(--text-dim);
-    transition: color 0.2s, transform 0.2s;
-  }
-
+  .arrow { font-size: 13px; color: var(--text-dim); transition: color 0.2s, transform 0.2s; }
   .card:hover .arrow { color: var(--a); transform: translate(2px, -2px); }
 
   .card-name {
@@ -217,117 +217,101 @@
     color: var(--text-primary);
     margin-top: 14px;
   }
-
   .card--ext .card-name { font-size: 15px; margin-top: 10px; }
 
-  .card-sub {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 1px;
-    letter-spacing: 0.04em;
-  }
+  .card-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; letter-spacing: 0.04em; }
 
   /* ── Buttons ── */
   .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     margin-top: 10px;
     width: 100%;
     padding: 13px;
     background: transparent;
-    border: 0.5px solid var(--border);
+    border: 0.5px solid rgba(255,255,255,0.14);
     border-radius: 10px;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     cursor: pointer;
     transition: border-color 0.2s, color 0.2s, background 0.2s;
   }
-
-  .btn:hover { border-color: var(--border-hover); color: var(--text-secondary); background: var(--surface); }
+  .btn:hover { border-color: var(--border-hover); color: var(--text-primary); background: rgba(255,255,255,0.03); }
 
   .btn--all {
     margin-top: 12px;
-    border-color: rgba(255,255,255,0.12);
-    color: var(--text-secondary);
+    border-color: rgba(255,255,255,0.18);
+    color: var(--text-primary);
     padding: 15px;
+    font-size: 12px;
   }
-
-  .btn--all:hover { border-color: rgba(255,255,255,0.28); color: var(--text-primary); }
+  .btn--all:hover { border-color: rgba(255,255,255,0.36); }
 
   /* ── Popup notice ── */
   .notice {
     display: none;
-    margin-top: 12px;
-    padding: 14px 16px;
-    background: rgba(251,191,36,0.05);
+    margin-top: 10px;
+    padding: 12px 15px;
+    background: rgba(251,191,36,0.04);
     border: 0.5px solid rgba(251,191,36,0.2);
     border-radius: 10px;
     font-size: 11px;
-    line-height: 1.7;
+    line-height: 1.8;
     color: var(--text-secondary);
   }
-
   .notice.visible { display: block; }
-
-  .notice strong {
-    display: block;
-    color: #fbbf24;
-    margin-bottom: 4px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-size: 10px;
-  }
-
-  .notice code {
-    background: rgba(255,255,255,0.07);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 10px;
-  }
+  .notice b { color: #fbbf24; font-weight: 400; }
 
   /* ── Divider ── */
-  .divider { height: 0.5px; background: var(--border); margin: 28px 0; }
+  .divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 28px 0; }
 
   /* ── Footer ── */
   .footer {
     margin-top: 36px;
+    padding-top: 18px;
+    border-top: 0.5px solid rgba(255,255,255,0.07);
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 20px;
-    border-top: 0.5px solid var(--border);
+    justify-content: flex-end;
   }
-
-  .time { font-size: 12px; color: var(--text-dim); letter-spacing: 0.06em; }
 
   .credit {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-muted);
     text-decoration: none;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     transition: color 0.2s;
+    font-weight: 500;
   }
-
   .credit:hover { color: var(--text-secondary); }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <div class="header">
-    <div class="badge"><span class="badge-dot"></span>Open Source</div>
-    <h1 class="title">AI Hub<span>.</span></h1>
-    <p class="subtitle">All the major AI assistants, one homepage. Click any card to open, or use the buttons to launch several at once.</p>
+  <!-- Clock -->
+  <div class="clock-block">
+    <div class="clock">
+      <span class="clock-hm" id="hm">--:--</span>
+      <span class="clock-sep">:</span>
+      <span class="clock-sec" id="sec">--</span>
+    </div>
+    <div class="clock-meta">
+      <span class="clock-date" id="date-line"></span>
+      <div class="weather" id="weather-block" style="display:none">
+        <span class="weather-temp" id="w-temp"></span>
+        <span class="weather-dot"></span>
+        <span id="w-cond"></span>
+        <span class="weather-dot"></span>
+        <span class="weather-loc" id="w-loc"></span>
+      </div>
+      <span class="weather" id="weather-loading" style="color:var(--text-dim);display:none">fetching weather...</span>
+    </div>
   </div>
 
+  <!-- Featured -->
   <p class="section-label">Featured</p>
-
   <div class="grid">
     <a class="card card--claude" href="https://claude.ai" target="_blank" rel="noopener">
       <div class="card-top"><div class="dot"></div><span class="arrow">↗</span></div>
@@ -346,13 +330,12 @@
       <div><div class="card-name">Grok</div><div class="card-sub">xAI</div></div>
     </a>
   </div>
-
-  <button class="btn" onclick="openFeatured(this)">→ Open featured AIs</button>
+  <button class="btn" onclick="openFeatured()">→ Open Featured AIs</button>
 
   <div class="divider"></div>
 
+  <!-- More -->
   <p class="section-label">More</p>
-
   <div class="grid grid--ext">
     <a class="card card--ext card--deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">
       <div class="card-top"><div class="dot"></div><span class="arrow">↗</span></div>
@@ -380,23 +363,88 @@
     </a>
   </div>
 
-  <button class="btn btn--all" onclick="openAll(this)">→ Open all AIs</button>
+  <button class="btn btn--all" onclick="openAll()">→ Open All AIs</button>
 
   <div class="notice" id="popup-notice">
-    <strong>⚠ Popups blocked</strong>
-    Your browser blocked the tabs from opening. This is a one-time fix — allow popups for this page and then try again.<br><br>
-    <b>Brave / Chrome:</b> Click the blocked popup icon in your address bar → "Always allow"<br>
-    <b>Firefox:</b> Click "Options" in the blocked popup bar → "Allow popups for this page"<br>
-    <b>Or go to:</b> Browser settings → Privacy &amp; Security → Pop-ups → Add <code>file:///</code> (or this site's URL) to the allow list
+    <b>Popups blocked —</b> one-time fix needed.&nbsp;
+    <b>Brave/Chrome:</b> click the blocked-popup icon in the address bar → Always allow.&nbsp;
+    <b>Firefox:</b> click Options in the bar → Allow popups for this page.
   </div>
 
   <div class="footer">
-    <span class="time" id="clock"></span>
-    <a class="credit" href="https://github.com/cyrwise" target="_blank" rel="noopener">made by cyrwise</a>
+    <a class="credit" href="https://github.com/cyrwise" target="_blank" rel="noopener">Made by Cyrwise</a>
   </div>
 
 </div>
 <script>
+  /* ── Clock ── */
+  var days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function tick() {
+    var now = new Date();
+    var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+    var ampm = h >= 12 ? 'pm' : 'am';
+    h = h % 12 || 12;
+    document.getElementById('hm').textContent = h + ':' + pad(m);
+    document.getElementById('sec').textContent = pad(s) + ' ' + ampm;
+    document.getElementById('date-line').textContent =
+      days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* ── Weather ── */
+  var WMO = {
+    0:'Clear', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
+    45:'Foggy', 48:'Foggy',
+    51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
+    61:'Light rain', 63:'Rain', 65:'Heavy rain',
+    71:'Light snow', 73:'Snow', 75:'Heavy snow',
+    80:'Showers', 81:'Showers', 82:'Heavy showers',
+    95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm'
+  };
+
+  function initWeather() {
+    if (!navigator.geolocation) return;
+    document.getElementById('weather-loading').style.display = 'flex';
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      var lat = pos.coords.latitude.toFixed(4);
+      var lon = pos.coords.longitude.toFixed(4);
+      var usF = navigator.language === 'en-US';
+      var unit = usF ? 'fahrenheit' : 'celsius';
+      var sym  = usF ? '°F' : '°C';
+
+      Promise.all([
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+              '&current=temperature_2m,weather_code&temperature_unit=' + unit).then(function(r){ return r.json(); }),
+        fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon +
+              '&format=json').then(function(r){ return r.json(); })
+      ]).then(function(results) {
+        var wx  = results[0];
+        var geo = results[1];
+        var temp = Math.round(wx.current.temperature_2m) + sym;
+        var code = wx.current.weather_code;
+        var cond = WMO[code] || 'Unknown';
+        var city = (geo.address && (geo.address.city || geo.address.town || geo.address.village || geo.address.county)) || 'Unknown';
+
+        document.getElementById('w-temp').textContent = temp;
+        document.getElementById('w-cond').textContent = cond;
+        document.getElementById('w-loc').textContent  = city;
+        document.getElementById('weather-loading').style.display = 'none';
+        document.getElementById('weather-block').style.display = 'flex';
+      }).catch(function() {
+        document.getElementById('weather-loading').style.display = 'none';
+      });
+    }, function() {
+      document.getElementById('weather-loading').style.display = 'none';
+    });
+  }
+
+  initWeather();
+
+  /* ── Tab management ── */
   var allUrls = [
     'https://claude.ai',
     'https://chatgpt.com',
@@ -416,40 +464,17 @@
     var blocked = false;
     for (var i = 0; i < urls.length; i++) {
       var w = window.open(urls[i], '_blank');
-      if (!w || w.closed || typeof w.closed === 'undefined') {
-        blocked = true;
-      }
+      if (!w || w.closed || typeof w.closed === 'undefined') blocked = true;
     }
     return blocked;
   }
 
   function showNotice(blocked) {
-    var el = document.getElementById('popup-notice');
-    if (blocked) {
-      el.classList.add('visible');
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-      el.classList.remove('visible');
-    }
+    document.getElementById('popup-notice').classList.toggle('visible', blocked);
   }
 
-  function openFeatured(btn) {
-    var blocked = tryOpen(featuredUrls);
-    showNotice(blocked);
-  }
-
-  function openAll(btn) {
-    var blocked = tryOpen(allUrls);
-    showNotice(blocked);
-  }
-
-  function tick() {
-    var now = new Date();
-    document.getElementById('clock').textContent =
-      now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-  tick();
-  setInterval(tick, 1000);
+  function openFeatured() { showNotice(tryOpen(featuredUrls)); }
+  function openAll()      { showNotice(tryOpen(allUrls)); }
 </script>
 </body>
 </html>
