@@ -96,25 +96,6 @@
     text-transform: uppercase;
   }
 
-  .weather {
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.06em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: default;
-  }
-
-  .weather-temp { color: var(--text-secondary); }
-  .weather-dot {
-    width: 3px; height: 3px;
-    border-radius: 50%;
-    background: var(--text-dim);
-    flex-shrink: 0;
-  }
-  .weather-loc { color: var(--text-muted); }
-
   /* ── Section label ── */
   .section-label {
     font-size: 11px;
@@ -290,7 +271,6 @@
 <body>
 <div class="container">
 
-  <!-- Clock -->
   <div class="clock-block">
     <div class="clock">
       <span class="clock-hm" id="hm">--:--</span>
@@ -299,18 +279,9 @@
     </div>
     <div class="clock-meta">
       <span class="clock-date" id="date-line"></span>
-      <div class="weather" id="weather-block" style="display:none">
-        <span class="weather-temp" id="w-temp"></span>
-        <span class="weather-dot"></span>
-        <span id="w-cond"></span>
-        <span class="weather-dot"></span>
-        <span class="weather-loc" id="w-loc"></span>
-      </div>
-      <span class="weather" id="weather-loading" style="color:var(--text-dim);display:none">fetching weather...</span>
     </div>
   </div>
 
-  <!-- Featured -->
   <p class="section-label">Featured</p>
   <div class="grid">
     <a class="card card--claude" href="https://claude.ai" target="_blank" rel="noopener">
@@ -334,7 +305,6 @@
 
   <div class="divider"></div>
 
-  <!-- More -->
   <p class="section-label">More</p>
   <div class="grid grid--ext">
     <a class="card card--ext card--deepseek" href="https://chat.deepseek.com" target="_blank" rel="noopener">
@@ -394,55 +364,6 @@
   }
   tick();
   setInterval(tick, 1000);
-
-  /* ── Weather ── */
-  var WMO = {
-    0:'Clear', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
-    45:'Foggy', 48:'Foggy',
-    51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
-    61:'Light rain', 63:'Rain', 65:'Heavy rain',
-    71:'Light snow', 73:'Snow', 75:'Heavy snow',
-    80:'Showers', 81:'Showers', 82:'Heavy showers',
-    95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm'
-  };
-
-  function initWeather() {
-    if (!navigator.geolocation) return;
-    document.getElementById('weather-loading').style.display = 'flex';
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      var lat = pos.coords.latitude.toFixed(4);
-      var lon = pos.coords.longitude.toFixed(4);
-      var usF = navigator.language === 'en-US';
-      var unit = usF ? 'fahrenheit' : 'celsius';
-      var sym  = usF ? '°F' : '°C';
-
-      Promise.all([
-        fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
-              '&current=temperature_2m,weather_code&temperature_unit=' + unit).then(function(r){ return r.json(); }),
-        fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon +
-              '&format=json').then(function(r){ return r.json(); })
-      ]).then(function(results) {
-        var wx  = results[0];
-        var geo = results[1];
-        var temp = Math.round(wx.current.temperature_2m) + sym;
-        var code = wx.current.weather_code;
-        var cond = WMO[code] || 'Unknown';
-        var city = (geo.address && (geo.address.city || geo.address.town || geo.address.village || geo.address.county)) || 'Unknown';
-
-        document.getElementById('w-temp').textContent = temp;
-        document.getElementById('w-cond').textContent = cond;
-        document.getElementById('w-loc').textContent  = city;
-        document.getElementById('weather-loading').style.display = 'none';
-        document.getElementById('weather-block').style.display = 'flex';
-      }).catch(function() {
-        document.getElementById('weather-loading').style.display = 'none';
-      });
-    }, function() {
-      document.getElementById('weather-loading').style.display = 'none';
-    });
-  }
-
-  initWeather();
 
   /* ── Tab management ── */
   var allUrls = [
